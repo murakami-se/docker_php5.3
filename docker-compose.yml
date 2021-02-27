@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  app:
+    image: orsolin/docker-php-5.3-apache
+    container_name: app
+    volumes:
+      - ./html:/var/www/html
+      - ./docker/php/php.ini:/etc/php5/apache2/php.ini
+      - ./docker/apache2/apache2.conf:/etc/apache2/apache2.conf
+    ports:
+      - 8080:80
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    volumes:
+      - ./docker/mysql/volumes:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=app
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=user
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_USER=root
+      - PMA_PASSWORD=root
+    links:
+      - mysql
+    ports:
+      - 4040:80
+    volumes:
+      - ./docker/phpmyadmin/sessions:/sessions
